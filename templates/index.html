@@ -1,1 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cafe & Co-Work — Remote Work Cafe Directory</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
 
+  <!-- ============ HEADER ============ -->
+  <header class="site-header">
+    <h1 class="site-title">Cafe & Co-Work</h1>
+    <p class="site-tagline">Find your next favorite spot to work, sip, and stay awhile.</p>
+  </header>
+
+  <!-- ============ ADD CAFE FORM ============ -->
+  <section class="add-cafe-section">
+    <details>
+      <summary class="add-cafe-toggle">+ Add a new cafe</summary>
+      <form class="add-cafe-form" action="{{ url_for('add_cafe') }}" method="POST">
+        <div class="form-row">
+          <label for="name">Cafe Name</label>
+          <input type="text" id="name" name="name" required />
+        </div>
+
+        <div class="form-row">
+          <label for="location">Location</label>
+          <input type="text" id="location" name="location" required />
+        </div>
+
+        <div class="form-row">
+          <label for="map_url">Google Maps URL</label>
+          <input type="url" id="map_url" name="map_url" required />
+        </div>
+
+        <div class="form-row">
+          <label for="img_url">Photo URL</label>
+          <input type="url" id="img_url" name="img_url" required />
+        </div>
+
+        <div class="form-row">
+          <label for="seats">Seats (e.g. 20-30)</label>
+          <input type="text" id="seats" name="seats" />
+        </div>
+
+        <div class="form-row">
+          <label for="coffee_price">Coffee Price (e.g. £2.50)</label>
+          <input type="text" id="coffee_price" name="coffee_price" />
+        </div>
+
+        <div class="form-row-checkboxes">
+          <label><input type="checkbox" name="has_wifi" /> Wifi</label>
+          <label><input type="checkbox" name="has_sockets" /> Power Sockets</label>
+          <label><input type="checkbox" name="has_toilet" /> Toilet</label>
+          <label><input type="checkbox" name="can_take_calls" /> Can Take Calls</label>
+        </div>
+
+        <button type="submit" class="btn-submit">Add Cafe</button>
+      </form>
+    </details>
+  </section>
+
+  <!-- ============ CAFE GRID ============ -->
+  <main class="cafe-grid">
+    {% for cafe in cafes %}
+    <article class="cafe-card">
+      <img class="cafe-photo" src="{{ cafe['img_url'] }}" alt="{{ cafe['name'] }}" />
+      <div class="cafe-info">
+        <h2 class="cafe-name">{{ cafe['name'] }}</h2>
+        <p class="cafe-location">📍 {{ cafe['location'] }}</p>
+
+        <div class="cafe-tags">
+          {% if cafe['has_wifi'] %}<span class="tag">📶 Wifi</span>{% endif %}
+          {% if cafe['has_sockets'] %}<span class="tag">🔌 Sockets</span>{% endif %}
+          {% if cafe['has_toilet'] %}<span class="tag">🚻 Toilet</span>{% endif %}
+          {% if cafe['can_take_calls'] %}<span class="tag">📞 Calls OK</span>{% endif %}
+        </div>
+
+        <p class="cafe-detail"><strong>Seats:</strong> {{ cafe['seats'] }}</p>
+        <p class="cafe-detail"><strong>Coffee:</strong> {{ cafe['coffee_price'] }}</p>
+
+        <p class="cafe-detail"><a href="{{ cafe['map_url'] }}" target="_blank">View on Map ↗</a></p>
+
+        <form class="delete-form" action="{{ url_for('delete_cafe', cafe_id=cafe['id']) }}" method="POST">
+          <button type="submit" class="btn-delete">Delete</button>
+        </form>
+      </div>
+    </article>
+    {% endfor %}
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="site-footer">
+    <p>Made for remote workers, by remote workers.</p>
+  </footer>
+
+</body>
+</html>
